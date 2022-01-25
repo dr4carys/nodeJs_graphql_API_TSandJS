@@ -6,45 +6,58 @@ export const CreateTaskData = TaskTC.mongooseResolvers.createOne({
     lean: true,
 });
 
-UserTC.addResolver({
-    name: 'ambildata',
-    type: [UserTC],
-    resolve: async (rp) => {
-        console.log(rp);
-        const data = await User.find({ name: rp.name });
-        console.log('this is data >>>>', data);
-        return data;
-    },
-});
+// UserTC.addResolver({
+//     name: 'ambildata',
+//     type: [UserTC],
+//     resolve: async (rp) => {
+//         console.log(rp);
+//         const data = await User.find({ name: rp.name });
+//         console.log('this is data >>>>', data);
+//         return data;
+//     },
+// });
 
 TaskTC.addRelation('data_user', {
-    resolver: () => UserTC.getResolver('ambildata'),
+    resolver: () =>
+        UserTC.mongooseResolvers
+            .findOne({ lean: true })
+            .removeArg(['filter', 'skip', 'sort']),
     prepareArgs: {
-        user: (source) => ({ user: source.user }),
+        _id: (source) => ({ _id: source._id }),
     },
     projection: { name: 1, email: 1 },
 });
 
 export const ambilData = TaskTC.mongooseResolvers.findOne({ lean: true });
-// const TaskQuery = {
-//     taskById: TaskTC.getResolver('findById'),
-//     taskByIds: TaskTC.getResolver('findByIds'),
-//     taskOne: TaskTC.getResolver('findOne'),
-//     taskMany: TaskTC.getResolver('findMany'),
-//     taskCount: TaskTC.getResolver('count'),
-//     taskConnection: TaskTC.getResolver('connection'),
-//     taskPagination: TaskTC.getResolver('pagination'),
-// };
 
-// const TaskMutation = {
-//     taskCreateOne: TaskTC.getResolver('createOne'),
-//     taskCreateMany: TaskTC.getResolver('createMany'),
-//     taskUpdateById: TaskTC.getResolver('updateById'),
-//     taskUpdateOne: TaskTC.getResolver('updateOne'),
-//     taskUpdateMany: TaskTC.getResolver('updateMany'),
-//     taskRemoveById: TaskTC.getResolver('removeById'),
-//     taskRemoveOne: TaskTC.getResolver('removeOne'),
-//     taskRemoveMany: TaskTC.getResolver('removeMany'),
-// };
+export const createTask = TaskTC.mongooseResolvers
+    .createOne()
+    .wrapResolve((next) => async (rp) => {
+        console.log(rp);
+        const data = await User.find({ id: rp.args.user });
+        if (!data) throw new Error('cannot find userName');
+        return next(rp);
+    });
 
-// export { TaskQuery, TaskMutation };
+export const editTaskByUser = TaskTC.mongooseResolvers.updateById({
+    record: { removeFields: ['user', 'createdAt', 'updatedAt', '_id'] },
+});
+
+export const findTaskByUser = TaskTC.mongooseResolvers
+    .findMany({
+        filter: {
+            requiredFields: ['user'],
+            removeFields: [
+                '_id',
+                'task',
+                'description',
+                'createdAt',
+                'updatedAt',
+                'OR',
+                'AND',
+            ],
+        },
+    })
+    .removeArg(['skip', 'limit', 'sort']);
+
+export const detailTask = TaskTC.mongooseResolvers.findById();

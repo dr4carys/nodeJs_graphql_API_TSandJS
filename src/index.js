@@ -5,6 +5,7 @@ import mongoose from 'mongoose';
 import bearer from './middleware/bearer';
 import './utils/db';
 import schema from './schema';
+import getErrorCode from './utils/errorHandling';
 
 dotenv.config();
 

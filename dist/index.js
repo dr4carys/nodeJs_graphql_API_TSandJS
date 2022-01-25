@@ -14,6 +14,10 @@ var _mongoose = require("mongoose");
 
 var _mongoose2 = _interopRequireDefault(_mongoose);
 
+var _bearer = require("./middleware/bearer");
+
+var _bearer2 = _interopRequireDefault(_bearer);
+
 require("./utils/db");
 
 var _schema = require("./schema");
@@ -31,7 +35,18 @@ const server = new _apolloServerExpress.ApolloServer({
   playground: process.env.NODE_ENV === 'development' ? true : false,
   introspection: true,
   tracing: true,
-  path: '/'
+  context: ({
+    req
+  }) => {
+    req; // console.log(req);
+    // bearer(req);
+    // console.log(req.headers['authorization']);
+    // const token = req.headers.authorization || '';
+    // console.log('SSSS', token);
+    // if (token != 'ganteng') {
+    //     throw new Error('no authroizatiin');
+    // }
+  }
 });
 
 async function connection() {

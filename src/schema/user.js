@@ -1,9 +1,7 @@
 import { User, UserTC } from '../models/user';
 import { Web, WebTC } from '../models/web';
+import { schemaComposer } from 'graphql-compose';
 const AmazonCognitoIdentity = require('amazon-cognito-identity-js');
-const CognitoUserPool = AmazonCognitoIdentity.CognitoUserPool;
-const AWS = require('aws-sdk');
-const request = require('request');
 const jwkToPem = require('jwk-to-pem');
 const jwt = require('jsonwebtoken');
 global.fetch = require('node-fetch');
@@ -11,6 +9,14 @@ const poolData = {
     UserPoolId: process.env.USERPOOLID, // Your user pool id here
     ClientId: process.env.CLIENTID, // Your client id here
 };
+export const userDetailTC = schemaComposer.createObjectTC(`
+type userDetailResponse{
+    name: String,
+    header_picture: String,
+    main_picture: String,
+    botton_picture: String
+}
+`);
 const pool_region = process.env.POOL_REGION;
 const userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
 UserTC.addResolver({
@@ -44,19 +50,14 @@ UserTC.addResolver({
                 Value: rp.args.email,
             })
         );
-        userPool.signUp(
+        const data = userPool.signUp(
             rp.args.email,
             rp.args.password,
             attributelist,
-            null,
-            function (err, result) {
-                if (err) {
-                    console.log(err);
-                    return;
-                }
-                console.log('user name is ', result.user);
-            }
+            null
         );
+        console.log('ini err', data);
+        return data;
     },
 });
 
@@ -98,16 +99,36 @@ UserTC.addResolver({
         let data = await User.findByIdAndUpdate(rp.args._id, {
             $push: { web_template: rp.args.web_template },
         });
-        data = {
-            data: {
-                createWeb: {
-                    name: '200',
-                    email: '200',
-                    web_template: '200',
-                },
-            },
-        };
         return data;
+    },
+});
+
+UserTC.addRelation('detail_web', {
+    resolver: () => WebTC.mongooseResolvers.dataLoaderMany({lean:true}),
+    prepareArgs:{
+        _ids: (source) => source.web_template
+    },
+    projection: { web_template: 1 },
+});
+userDetailTC.addResolver({
+    name: 'customUser',
+    args: { name: 'String' },
+    type: [userDetailTC],
+    kind: 'query',
+    resolve: async (rp) => {
+        console.log('rp >>', rp.args.name);
+        let kumData = []
+        let data = await User.find({ name: rp.args.name });
+        console.log(">>data",data)
+        for (let b = 0; b < data[0].web_template.length; b++) {
+            let baru = await Web.findById(data[0].web_template[b],{header_picture:1,main_picture:1,botton_picture:1});
+                kumData.push(baru[0]={
+                    ...baru[0],
+                    ...{name:data[0].name}
+                })
+            }
+        console.log(">>kumdata",kumData)
+        return kumData
     },
 });
 export const createWeb = UserTC.getResolver('createWeb');
@@ -161,11 +182,46 @@ UserTC.addRelation('ambilData', {
     projection: { web_template: 1 },
 });
 export const ambilDataWeb = UserTC.mongooseResolvers.findById();
-
+export const userWrap = (newResolver) => {
+    // this resolver will expect bridgeRef and deviceRef as args
+    newResolver.args = {
+        name: { type: schemaComposer.getSTC('String') },
+    };
+    return newResolver;
+};
 export const signup = UserTC.getResolver('createUser');
 export const UpdateUser = UserTC.getResolver('updateUser');
 export const findUser = UserTC.mongooseResolvers.findById({ lean: true });
-export const findManyUser = UserTC.getResolver('findBanyakUser');
+export const findManyUser = UserTC.mongooseResolvers
+    .findMany({
+        lean: true,
+        filter: {
+            removeFields: [
+                '_id',
+                'email',
+                'no_hp',
+                'alamat',
+                'updatedAt',
+                'createdAt',
+                'ambilData',
+                'OR',
+                'AND',
+            ],
+            isRequired: true,
+        },
+    })
+    .addFilterArg({
+        name: 'name',
+        type: 'String',
+        description: 'test',
+        query: (query, value) => {
+            // sometimes email is in the form of a+10@gmail.com
+            query.name = value;
+        },
+    })
+    .removeArg(['sort', 'skip', 'limit']);
+
+export const findManyUserCustom = userDetailTC.getResolver('customUser');
 // export const banyakData = UserTC.getResolver('test');
 export const userCreateOne = UserTC.mongooseResolvers
     .createOne({ lean: true })

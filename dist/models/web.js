@@ -30,6 +30,8 @@ const WebSchema = exports.WebSchema = new _mongoose.Schema({
     type: String,
     trim: true
   }
+}, {
+  collection: 'webs'
 });
 WebSchema.plugin(_mongooseTimestamp2.default);
 WebSchema.index({

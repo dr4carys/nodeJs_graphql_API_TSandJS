@@ -38,8 +38,6 @@ const UserSchema = exports.UserSchema = new _mongoose.Schema({
     type: _mongoose.Schema.Types.ObjectId,
     ref: 'Web'
   }]
-}, {
-  collection: 'users'
 });
 UserSchema.plugin(_mongooseTimestamp2.default);
 UserSchema.index({
@@ -49,4 +47,6 @@ UserSchema.index({
 
 const User = exports.User = _mongoose2.default.model('User', UserSchema);
 
-const UserTC = exports.UserTC = (0, _graphqlComposeMongoose.composeMongoose)(User);
+const UserTC = exports.UserTC = (0, _graphqlComposeMongoose.composeMongoose)(User, {
+  onlyFields: ['_id', 'name']
+});
