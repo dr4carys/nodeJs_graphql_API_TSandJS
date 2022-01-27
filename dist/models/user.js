@@ -33,14 +33,11 @@ const UserSchema = exports.UserSchema = new _mongoose.Schema({
   },
   alamat: {
     type: String
-  },
-  web_template: [{
-    type: _mongoose.Schema.Types.ObjectId,
-    ref: 'Web'
-  }]
+  }
 });
 UserSchema.plugin(_mongooseTimestamp2.default);
 UserSchema.index({
+  _id: 1,
   createdAt: 1,
   updatedAt: 1
 });
@@ -48,5 +45,5 @@ UserSchema.index({
 const User = exports.User = _mongoose2.default.model('User', UserSchema);
 
 const UserTC = exports.UserTC = (0, _graphqlComposeMongoose.composeMongoose)(User, {
-  onlyFields: ['_id', 'name']
+  onlyFields: ['name', 'email', 'no_hp', 'alamat']
 });

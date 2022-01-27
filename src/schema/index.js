@@ -5,52 +5,44 @@ import { SchemaComposer } from 'graphql-compose';
 const schemaComposer = new SchemaComposer();
 // import { schemaComposer } from 'graphql-compose';
 import {
+  userFindById,
   userCreateOne,
-  findManyUser,
-  findUser,
-  UpdateUser,
-  createWeb,
-  ambilDataWeb,
-  signup,
-  logIn,
-  findManyUserCustom,
+  userUpdateById,
+  userConnection,
 } from './user';
-import { buat_web } from './web';
-import {
-  CreateTaskData,
-  ambilData,
-  createTask,
-  findTaskByUser,
-  detailTask,
-  editTaskByUser,
-} from './task';
 
-import { buatBuku } from './book';
-import { pinjamBook, returnBook } from './borrowBook';
+import { categoryCreateOne, categoryFindById } from './category';
+import {
+  bookCreateOne,
+  bookFindById,
+  bookUpdateById,
+  bookFindMany,
+} from './book';
+import {
+  rentBook,
+  returnBook,
+  borrowBookConnection,
+  borrowBookFindById,
+} from './borrowBook';
 
 schemaComposer.Query.addFields({
-  findManyUserCustom,
-  ambilDataWeb,
-  ambilData,
-  findUser,
-  findManyUser,
-  findTaskByUser,
-  detailTask,
+  userFindById,
+  userConnection,
+  bookFindById,
+  bookFindMany,
+  categoryFindById,
+  borrowBookConnection,
+  borrowBookFindById,
 });
 
 schemaComposer.Mutation.addFields({
-  createTask,
-  logIn,
-  signup,
-  buat_web,
-  CreateTaskData,
-  userCreateOne,
-  UpdateUser,
-  createWeb,
-  editTaskByUser,
-  buatBuku,
-  pinjamBook,
+  rentBook,
   returnBook,
+  userCreateOne,
+  userUpdateById,
+  bookCreateOne,
+  bookUpdateById,
+  categoryCreateOne,
 });
 
 export default schemaComposer.buildSchema();

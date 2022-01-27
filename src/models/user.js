@@ -3,28 +3,20 @@ import timestamps from 'mongoose-timestamp';
 import { composeMongoose } from 'graphql-compose-mongoose';
 
 export const UserSchema = new Schema({
-    name: {
-        type: String,
-        trim: true,
-    },
-    email: {
-        type: String,
-        lowercase: true,
-        trim: true,
-        unique: true,
-    },
-    no_hp: {
-        type: String,
-    },
-    alamat: {
-        type: String,
-    },
-    web_template: [
-        {
-            type: Schema.Types.ObjectId,
-            ref: 'Web',
-        },
-    ],
+  name: {
+    type: String,
+    trim: true,
+  },
+  email: {
+    type: String,
+    unique: true,
+  },
+  no_hp: {
+    type: String,
+  },
+  alamat: {
+    type: String,
+  },
 });
 
 UserSchema.plugin(timestamps);
@@ -33,5 +25,5 @@ UserSchema.index({ createdAt: 1, updatedAt: 1 });
 
 export const User = mongoose.model('User', UserSchema);
 export const UserTC = composeMongoose(User, {
-    onlyFields: ['_id', 'name'],
+  onlyFields: ['name', 'email', 'no_hp', 'alamat'],
 });

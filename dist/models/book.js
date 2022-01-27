@@ -18,13 +18,17 @@ var _graphqlComposeMongoose = require("graphql-compose-mongoose");
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 const bookSchema = exports.bookSchema = new _mongoose.Schema({
-  BookTitle: {
+  bookTitle: {
     type: String,
     required: true
   },
-  Pax: {
+  pax: {
+    type: Number,
+    required: true
+  },
+  category: {
     type: String,
-    trim: true,
+    ref: 'Category',
     required: true
   }
 }, {
@@ -38,4 +42,6 @@ bookSchema.index({
 
 const Book = exports.Book = _mongoose2.default.model('Book', bookSchema);
 
-const BookTC = exports.BookTC = (0, _graphqlComposeMongoose.composeMongoose)(Book);
+const BookTC = exports.BookTC = (0, _graphqlComposeMongoose.composeMongoose)(Book, {
+  onlyFields: ['_id', 'bookTitle', 'pax', 'category']
+});

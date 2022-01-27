@@ -24,6 +24,10 @@ var _schema = require("./schema");
 
 var _schema2 = _interopRequireDefault(_schema);
 
+var _errorHandling = require("./utils/errorHandling");
+
+var _errorHandling2 = _interopRequireDefault(_errorHandling);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 _dotenv2.default.config();
@@ -53,7 +57,7 @@ async function connection() {
   await server.start();
   server.applyMiddleware({
     app,
-    path: '/',
+    path: '/graphql',
     cors: true,
     onHealthCheck: () => // eslint-disable-next-line no-undef
     new Promise((resolve, reject) => {

@@ -34,7 +34,7 @@ async function connection() {
     await server.start();
     server.applyMiddleware({
         app,
-        path: '/',
+        path: '/graphql',
         cors: true,
         onHealthCheck: () =>
             // eslint-disable-next-line no-undef

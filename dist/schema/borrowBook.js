@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.getBackBook = exports.pinjamBook = undefined;
+exports.returnBook = exports.rentBook = undefined;
 
 var _express = require("express");
 
@@ -13,14 +13,16 @@ var _borrowBook = require("../models/borrowBook");
 
 var _user = require("../models/user");
 
+var _apolloServer = require("apollo-server");
+
 let date = new Date();
 
-_borrowBook.borrowBookTC.addRelation('detialUser', {
-  resolver: () => _user.UserTC.mongooseResolvers.dataLoaderMany({
+_borrowBook.borrowBookTC.addRelation('detailUser', {
+  resolver: () => _user.UserTC.mongooseResolvers.dataLoader({
     lean: true
   }),
   prepareArgs: {
-    _id: source => source._id
+    _id: source => source.idUser
   },
   projection: {
     idUser: 1
@@ -28,33 +30,64 @@ _borrowBook.borrowBookTC.addRelation('detialUser', {
 });
 
 _borrowBook.borrowBookTC.addRelation('detailBook', {
-  resolver: () => _book.BookTC.mongooseResolvers.dataLoaderMany({
+  resolver: () => _book.BookTC.mongooseResolvers.dataLoader({
     lean: true
   }),
   prepareArgs: {
-    _id: source => source._id
+    _id: source => source.idBook
   },
   projection: {
     idBook: 1
   }
 });
 
-const pinjamBook = exports.pinjamBook = _borrowBook.borrowBookTC.mongooseResolvers.createOne({
-  lean: true
+const rentBook = exports.rentBook = _borrowBook.borrowBookTC.mongooseResolvers.createOne({
+  record: {
+    removeFields: ['_id', 'startPinjam', 'createdAt', 'updatedAt']
+  }
 }).wrapResolve(next => async rp => {
-  console.log('>>>rp', rp);
+  const {
+    record: {
+      idBook,
+      pax: Pax,
+      endPinjam
+    }
+  } = rp.args;
+  const data = await _book.Book.findById(idBook);
+
+  if (data.pax < 1 || new Date(endPinjam).getTime() < new Date().getTime()) {
+    throw new _apolloServer.ApolloError('error wether book in unvailable or wrong input date', '400');
+  } else {
+    data.pax = data.pax - Pax;
+  }
 
   rp.beforeRecordMutate = record => {
     record.startPinjam = new Date();
-    record.endPinjam = date.setDate(date.getDate() + 6);
+    record.status = true;
     return record;
   };
 
-  return next(rp);
+  const [dataBook] = await Promise.all([next(rp), _book.Book.findByIdAndUpdate({
+    _id: idBook
+  }, {
+    $set: {
+      pax: data.pax
+    }
+  })]);
+  return dataBook;
 });
 
-const getBackBook = exports.getBackBook = _borrowBook.borrowBookTC.mongooseResolvers.findById().wrapResolve(next => async rp => {
-  console.log(rp);
-  const data = await next(rp);
-  console.log(cool);
-});
+const returnBook = exports.returnBook = _borrowBook.borrowBookTC.mongooseResolvers.updateById().wrapResolve(next => async rp => {
+  const {
+    _id: userRef
+  } = rp.args;
+  const data = await _borrowBook.borrowBook.findById(userRef);
+  if (new Date().getTime() > data.endPinjam.getTime()) throw new _apolloServer.ApolloError('late to return the book');
+
+  rp.beforeRecordMutate = record => {
+    record.status = false;
+  };
+
+  rp.args.record = {};
+  return next(rp);
+}).removeArg(['record']); // export const getAllBookById = borrowBookTC.mongooseResolvers.findMany().wrap

@@ -20,24 +20,32 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 const borrowBookSchema = exports.borrowBookSchema = new _mongoose.Schema({
   idUser: {
     type: _mongoose.Schema.Types.ObjectId,
-    ref: 'User'
+    ref: 'User',
+    required: true
   },
   idBook: {
     type: _mongoose.Schema.Types.ObjectId,
-    ref: 'Book'
+    ref: 'Book',
+    required: true
   },
   startPinjam: {
-    type: Date
+    type: Date,
+    required: true
   },
   endPinjam: {
-    type: Date
+    type: Date,
+    requited: true
   },
   status: {
     type: Boolean,
     required: true
+  },
+  pax: {
+    type: Number,
+    required: true
   }
 }, {
-  collection: 'books'
+  collection: 'borrowBooks'
 });
 borrowBookSchema.plugin(_mongooseTimestamp2.default);
 borrowBookSchema.index({
@@ -47,4 +55,6 @@ borrowBookSchema.index({
 
 const borrowBook = exports.borrowBook = _mongoose2.default.model('borrowBook', borrowBookSchema);
 
-const borrowBookTC = exports.borrowBookTC = (0, _graphqlComposeMongoose.composeMongoose)(borrowBook);
+const borrowBookTC = exports.borrowBookTC = (0, _graphqlComposeMongoose.composeMongoose)(borrowBook, {
+  onlyFields: ['_id', 'idUser', 'idBook', 'status', 'createdAt', 'updatedAt', 'startPinjam', 'endPinjam', 'pax']
+});
