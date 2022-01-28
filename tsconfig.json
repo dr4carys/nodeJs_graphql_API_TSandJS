@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "module": "CommonJS",
+    "target": "es2017",
+    "lib": ["es6", "dom", "es2016.array.include"],
+    "moduleResolution": "node",
+    "rootDir": "./",
+    "sourceMap": true,
+    "allowJs": true,
+    "noImplicitAny": true,
+    "noUnusedLocals": true,
+    "noImplicitThis": true,
+    "strictNullChecks": false,
+    "noImplicitReturns": true,
+    "preserveConstEnums": true,
+    "suppressImplicitAnyIndexErrors": true,
+    "forceConsistentCasingInFileNames": true,
+    "outDir": "dist",
+    "esModuleInterop": true
+  },
+  "exclude": ["node_modules", "build", "webpack"],
+  "types": ["typePatches"],
+  "include": ["./index.ts", "./server.ts", "src/**/*"]
+}
