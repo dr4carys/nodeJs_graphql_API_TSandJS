@@ -1,4 +1,3 @@
-
 import { Book, BookTC, IBookModel } from '../models/book';
 import { CategoryTC } from '../models/category';
 import { ResolverResolveParams } from 'graphql-compose/lib/Resolver';

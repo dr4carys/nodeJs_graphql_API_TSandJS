@@ -10,7 +10,7 @@ const validatedInputResolver = (next: any) => async (rp: ResolverResolveParams<a
   const {
     record: { email, no_hp },
   } = rp.args;
-  console.log(email)
+  console.log(email);
   if (email) {
     if (!email.match(emailRegex)) throw new Error(' email is not valid ');
   }

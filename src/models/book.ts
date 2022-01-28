@@ -32,5 +32,5 @@ bookSchema.index({ createdAt: 1, updatedAt: 1 });
 
 export const Book = mongoose.model<IBookModel>('Book', bookSchema, 'books', true);
 export const BookTC = composeMongoose(Book, {
-  onlyFields: ['_id', 'bookTitle', 'pax', 'category'],
+  onlyFields: ['_id', 'bookTitle', 'pax'],
 });

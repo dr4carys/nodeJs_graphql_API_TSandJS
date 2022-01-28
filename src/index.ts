@@ -5,7 +5,6 @@ import mongoose from 'mongoose';
 // import bearer from './middleware/bearer';
 import './utils/db';
 import { graphqlSchema } from './schema';
-// import getErrorCode from './utils/errorHandling';
 
 dotenv.config();
 
@@ -14,15 +13,8 @@ const app = express();
 const server = new ApolloServer({
   schema: graphqlSchema,
   context: ({ req }) => {
-    req;
-    // console.log(req);
-    // bearer(req);
-    // console.log(req.headers['authorization']);
-    // const token = req.headers.authorization || '';
-    // console.log('SSSS', token);
-    // if (token != 'ganteng') {
-    //     throw new Error('no authroizatiin');
-    // }
+      req;
+      // TODO:well do it later
   },
 });
 
