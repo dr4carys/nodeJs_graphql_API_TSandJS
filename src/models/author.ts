@@ -30,4 +30,4 @@ export const authorSchema = new Schema(
 authorSchema.index({ createdAt: 1, updatedAt: 1 });
 
 export const Author = mongoose.model<IAuthorModel>('Author', authorSchema, 'Author', true);
-export const AuthorTC = composeMongoose(Author, { onlyFields: ['name','description','books'] });
+export const AuthorTC = composeMongoose(Author, { onlyFields: ['name', 'description', 'books'] });
