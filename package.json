@@ -13,7 +13,7 @@
         "pretest": "eslint --ignore-path .gitignore .",
         "lint": "yarn prettier --write --check --config ./.prettierrc \"**/*.js\" && eslint --fix ./src",
         "release": "release-it patch --no-npm.publish",
-        "serve-debug": " nodemon --inspect dist/index.js",
+        "serve-debug": " nodemon --inspect dist/src/index.js",
         "watch-ts": "tsc -w",
         "watch-debug": "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"cyan.bold,green.bold\" \"npm run watch-ts\" \"npm run serve-debug\""
     },
