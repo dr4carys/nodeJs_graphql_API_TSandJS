@@ -27,9 +27,9 @@ async function connection() {
     onHealthCheck: () =>
       new Promise((resolve: any, reject) => {
         if (mongoose.connection.readyState > 0) {
-          resolve();
+          resolve(console.log('berhasil'));
         } else {
-          reject();
+          reject(console.log(' gaberhasil'));
         }
       }),
   });
