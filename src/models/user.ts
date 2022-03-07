@@ -23,6 +23,9 @@ export const UserSchema = new Schema(
     alamat: {
       type: String,
     },
+    password: {
+      type: String,
+    },
   },
   {
     timestamps: true,
@@ -33,5 +36,5 @@ UserSchema.index({ createdAt: 1, updatedAt: 1 });
 
 export const User = mongoose.model<IUserModel>('User', UserSchema, 'users', true);
 export const UserTC = composeMongoose(User, {
-  onlyFields: ['name', 'email', 'no_hp', 'alamat'],
+  onlyFields: ['name', 'email', 'no_hp', 'alamat', 'password'],
 });

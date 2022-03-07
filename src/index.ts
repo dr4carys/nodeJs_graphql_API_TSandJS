@@ -1,42 +1,19 @@
-import dotenv from 'dotenv';
+import router from './router';
 import express from 'express';
-import { ApolloServer } from 'apollo-server-express';
 import mongoose from 'mongoose';
-// import bearer from './middleware/bearer';
-import './utils/db';
-import { graphqlSchema } from './schema';
 
-dotenv.config();
+import { MONGO_DEBUG, MONGODB_URL } from './config';
+import { Mongoose } from 'mongoose';
 
 const app = express();
+let conn: Mongoose;
 
-const server = new ApolloServer({
-  schema: graphqlSchema,
-  context: ({ req }) => {
-      req;
-      // TODO:well do it later
-  },
+app.use(async (req, res, next) => {
+  if (conn === undefined) conn = await mongoose.connect(MONGODB_URL);
+  mongoose.set('debug', MONGO_DEBUG);
+  next();
 });
-
-async function connection() {
-  await server.start();
-  server.applyMiddleware({
-    app,
-    path: '/graphql',
-    cors: true,
-    onHealthCheck: () =>
-      new Promise((resolve: any, reject) => {
-        if (mongoose.connection.readyState > 0) {
-          resolve(console.log('berhasil'));
-        } else {
-          reject(console.log(' gaberhasil'));
-        }
-      }),
-  });
-}
-
-connection();
-app.listen({ port: process.env.PORT }, () => {
-  console.log(`🚀 Server listening on port ${process.env.PORT}`);
-  console.log(`😷 Health checks available at ${process.env.HEALTH_ENDPOINT}`);
-});
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(router);
+export const App = app;

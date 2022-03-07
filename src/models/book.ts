@@ -22,6 +22,11 @@ export const bookSchema = new Schema(
       ref: 'Category',
       required: true,
     },
+    imagePath: [
+      {
+        type: String,
+      },
+    ],
   },
   {
     timestamps: true,

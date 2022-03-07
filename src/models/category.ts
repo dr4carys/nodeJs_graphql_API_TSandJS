@@ -16,7 +16,7 @@ export const categorySchema = new Schema(
   }
 );
 
-categorySchema.index({ _id: 1 });
+categorySchema.index({ createdAt: 1, updatedAt: 1 });
 
 export const Category = mongoose.model<ICategoryModel>('Category', categorySchema, 'categories', true);
 export const CategoryTC = composeMongoose(Category, {
