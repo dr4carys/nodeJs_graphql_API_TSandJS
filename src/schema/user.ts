@@ -21,6 +21,8 @@ const validatedInputResolver = (next: any) => async (rp: ResolverResolveParams<a
 };
 
 export const userFindById = UserTC.mongooseResolvers.findById();
+export const userFindOne = UserTC.mongooseResolvers.findOne();
+export const userFindMany = UserTC.mongooseResolvers.findMany();
 export const userCreateOne = UserTC.mongooseResolvers.createOne().wrapResolve(validatedInputResolver);
 export const userUpdateById = UserTC.mongooseResolvers.updateById().wrapResolve(validatedInputResolver);
 

@@ -1,11 +1,13 @@
 import { schemaComposer } from 'graphql-compose';
-import { userFindById, userCreateOne, userUpdateById, userConnection } from './user';
+import { userFindById, userFindOne, userFindMany, userCreateOne, userUpdateById, userConnection } from './user';
 import { categoryCreateOne, categoryFindById } from './category';
 import { bookCreateOne, bookFindById, bookUpdateById, bookFindMany } from './book';
 import { rentBook, returnBook, borrowBookConnection, borrowBookFindById } from './borrowBook';
 import { authorCreateOne, authorFindById, authorConnection, authorCreateMany } from './author';
 schemaComposer.Query.addFields({
   userFindById,
+  userFindOne, 
+  userFindMany,
   userConnection,
   bookFindById,
   bookFindMany,
