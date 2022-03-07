@@ -7,7 +7,7 @@
     "rootDir": "./",
     "sourceMap": true,
     "allowJs": true,
-    "noImplicitAny": true,
+    "noImplicitAny": false,
     "noUnusedLocals": true,
     "noImplicitThis": true,
     "strictNullChecks": false,
