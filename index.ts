@@ -3,6 +3,9 @@ import { App } from './src';
 import express from 'express';
 import { ApolloServer } from 'apollo-server-express';
 import { graphqlSchema } from './src/graphql';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const router = express.Router();
 const server = new ApolloServer({
@@ -19,5 +22,5 @@ server.start().then(() => {
   // App.use(cors());
   // App.use(router.routes());
   console.log(`server listening on port 3001 on`);
-  App.listen(3001);
+  App.listen(process.env.PORT || 5000);
 });
