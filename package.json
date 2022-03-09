@@ -4,7 +4,8 @@
     "description": "",
     "main": "index.js",
     "scripts": {
-        "start": "npm run build-ts && npm run watch-debug",
+        "start": "node --optimize_for_size --max_old_space_size=460 dist/main.js && npm run startnew",
+        "startnew" :"npm run build-ts && npm run watch-debug",
         "debug": "npm run build-ts && npm run watch-debug",
         "build-ts": "npm run build-ts-tsc && npm run tslint",
         "tslint": "tslint -c tslint.json -p tsconfig.json",
