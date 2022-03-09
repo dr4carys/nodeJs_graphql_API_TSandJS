@@ -37,5 +37,5 @@ nilaiSchema.index({ createdAt: 1, updatedAt: 1 });
 
 export const Nilai = mongoose.model<INilaiModel>('Nilai', nilaiSchema, 'nilai', true);
 export const NilaiTC = composeMongoose(Nilai, {
-  onlyFields: ['idMahasiswa', 'idPembimbing','nilai'],
+  onlyFields: ['idMahasiswa', 'idPembimbing', 'nilai'],
 });

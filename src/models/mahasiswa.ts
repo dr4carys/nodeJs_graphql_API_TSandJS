@@ -4,6 +4,7 @@ import { composeMongoose } from 'graphql-compose-mongoose';
 export interface IMahasiswaModel extends mongoose.Document {
   name: string;
   NIM: string;
+  imageKey: string;
 }
 
 export const mahasiswaSchema = new Schema(
@@ -16,6 +17,7 @@ export const mahasiswaSchema = new Schema(
       type: String,
       required: true,
     },
+    imageKey: { type: String },
   },
   {
     timestamps: true,
